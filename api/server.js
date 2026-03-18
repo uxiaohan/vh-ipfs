@@ -260,14 +260,17 @@ app.get("/files/:accessPath", async (request, reply) => {
 
 app.get("/ipfs/:cid", async (request, reply) => {
   const cid = request.params.cid;
-  const row = db.prepare("SELECT stored_path, mime_type FROM images WHERE cid = ?").get(cid);
-  
-  if (!row?.stored_path || !fs.existsSync(row.stored_path)) {
-    return reply.code(404).send({ error: "not_found" });
+  const targetUrl = `http://127.0.0.1:16662/ipfs/${cid}`;
+
+  const response = await fetch(targetUrl);
+  if (!response.ok) {
+    return reply.code(response.status).send({ error: "not_found" });
   }
-  
-  imageService.updateAccessByCid(cid);
-  return reply.header("content-type", row.mime_type).send(fs.createReadStream(row.stored_path));
+
+  const contentType = response.headers.get("content-type") || "application/octet-stream";
+  const buffer = Buffer.from(await response.arrayBuffer());
+
+  return reply.header("content-type", contentType).send(buffer);
 });
 
 app.get("/api/admin/images", { preValidation: [app.authenticate] }, async (request) => {
