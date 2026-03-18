@@ -30,7 +30,6 @@ export const api = {
       ...options,
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
         ...options.headers
       }
     });

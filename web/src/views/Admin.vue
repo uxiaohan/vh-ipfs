@@ -168,7 +168,7 @@
                 <td>
                   <button
                     class="btn btn-sm btn-ghost"
-                    @click="openFile(file.ipfs_url)"
+                    @click="openFile(file.local_url)"
                   >
                     查看
                   </button>

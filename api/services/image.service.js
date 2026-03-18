@@ -102,7 +102,7 @@ export class ImageService {
     return {
       ...row,
       ipfs_url: `${this.getPublicGatewayUrl()}/${row.cid}`,
-      local_url: `/files/${row.id}`
+      local_url: `/files/${row.access_path}`
     };
   }
 

@@ -235,7 +235,7 @@ const uploadFile = async () => {
         const json = await res.json()
         successCount++
         const gateway = selectedGateway.value || window.location.origin
-        results.push(`${json.original_name}: ${gateway}/${json.cid}`)
+        results.push(`${json.original_name}: ${gateway}/ipfs/${json.cid}`)
       } else {
         failCount++
       }
