@@ -28,6 +28,13 @@ const {
 
 const IPFS_API_URL = "http://127.0.0.1:5001";
 
+function generateAccessPath() {
+  const timestamp = Date.now();
+  const random = crypto.randomBytes(8).toString('hex');
+  const hash = crypto.createHash('md5').update(`${timestamp}-${random}`).digest('hex');
+  return hash.substring(0, 16);
+}
+
 const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 const ACTUAL_DB_PATH = DB_PATH ?? path.join(DATA_DIR, "db.sqlite");
 
@@ -192,6 +199,7 @@ app.post("/api/upload", async (request, reply) => {
     const cidStr = cid.toString();
     const ua = request.headers["user-agent"] ?? "";
     const parsedUA = parseUserAgent(ua);
+    const accessPath = generateAccessPath();
 
     const rowId = imageService.insertImage({
       cid: cidStr,
@@ -206,7 +214,8 @@ app.post("/api/upload", async (request, reply) => {
       uploader_browser: parsedUA.browser,
       uploader_os: parsedUA.os,
       uploader_device: parsedUA.device,
-      pin_status: "local"
+      pin_status: "local",
+      access_path: accessPath
     });
 
     storageService.cleanupByStorageLimit();
@@ -216,7 +225,7 @@ app.post("/api/upload", async (request, reply) => {
       cid: cidStr,
       original_name: part.filename,
       ipfs_url: `${imageService.getPublicGatewayUrl()}/${cidStr}`,
-      local_url: `/files/${rowId}`
+      local_url: `/files/${accessPath}`
     };
   } catch (err) {
     if (storedPath && fs.existsSync(storedPath)) {
@@ -237,15 +246,27 @@ app.get("/api/images", async (request) => {
   return rows.map(row => imageService.mapImageRow(row));
 });
 
-app.get("/files/:id", async (request, reply) => {
-  const id = Number(request.params.id);
-  const row = db.prepare("SELECT stored_path, mime_type FROM images WHERE id = ?").get(id);
+app.get("/files/:accessPath", async (request, reply) => {
+  const accessPath = request.params.accessPath;
+  const row = db.prepare("SELECT stored_path, mime_type FROM images WHERE access_path = ?").get(accessPath);
   
   if (!row?.stored_path || !fs.existsSync(row.stored_path)) {
     return reply.code(404).send({ error: "not_found" });
   }
   
-  imageService.updateAccess(id);
+  imageService.updateAccessByAccessPath(accessPath);
+  return reply.header("content-type", row.mime_type).send(fs.createReadStream(row.stored_path));
+});
+
+app.get("/ipfs/:cid", async (request, reply) => {
+  const cid = request.params.cid;
+  const row = db.prepare("SELECT stored_path, mime_type FROM images WHERE cid = ?").get(cid);
+  
+  if (!row?.stored_path || !fs.existsSync(row.stored_path)) {
+    return reply.code(404).send({ error: "not_found" });
+  }
+  
+  imageService.updateAccessByCid(cid);
   return reply.header("content-type", row.mime_type).send(fs.createReadStream(row.stored_path));
 });
 

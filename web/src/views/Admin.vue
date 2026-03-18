@@ -584,6 +584,20 @@ onMounted(async () => {
 .admin-page {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   padding: 2rem;
+  min-height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .admin-page {
+    padding: 1rem;
+  }
 }
 
 .admin-grid {
@@ -592,6 +606,12 @@ onMounted(async () => {
   gap: 2rem;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .admin-grid {
+    gap: 1rem;
+  }
 }
 
 .login-box {

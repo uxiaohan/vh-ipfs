@@ -28,7 +28,8 @@ export function initDb(dbPath) {
       uploader_device TEXT,
       last_accessed TEXT,
       access_count INTEGER NOT NULL DEFAULT 0,
-      pin_status TEXT NOT NULL DEFAULT 'local'
+      pin_status TEXT NOT NULL DEFAULT 'local',
+      access_path TEXT NOT NULL UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS settings (
@@ -39,6 +40,7 @@ export function initDb(dbPath) {
     CREATE INDEX IF NOT EXISTS idx_images_created_at ON images(created_at);
     CREATE INDEX IF NOT EXISTS idx_images_access_count ON images(access_count);
     CREATE INDEX IF NOT EXISTS idx_images_last_accessed ON images(last_accessed);
+    CREATE INDEX IF NOT EXISTS idx_images_access_path ON images(access_path);
   `);
 
   return db;

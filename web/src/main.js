@@ -4,13 +4,15 @@ import App from './App.vue'
 import Login from './views/Login.vue'
 import Upload from './views/Upload.vue'
 import Admin from './views/Admin.vue'
+import NotFound from './views/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/login', component: Login },
     { path: '/', component: Upload, meta: { requiresSiteLogin: true } },
-    { path: '/admin', component: Admin, meta: { requiresSiteLogin: true } }
+    { path: '/admin', component: Admin, meta: { requiresSiteLogin: true } },
+    { path: '/:pathMatch(.*)*', component: NotFound }
   ]
 })
 
