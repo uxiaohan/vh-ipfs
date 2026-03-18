@@ -50,7 +50,7 @@ app.decorate("authenticate", async (request, reply) => {
 await app.register(multipart, { limits: { fileSize: MAX_UPLOAD_BYTES } });
 
 await app.register(staticPlugin, {
-  root: path.join(__dirname, "../public"),
+  root: path.join(__dirname, "../../public"),
   prefix: "/"
 });
 
@@ -346,7 +346,7 @@ app.get("/api/health", async () => {
 
 app.setNotFoundHandler((request, reply) => {
   if (!request.url.startsWith('/api') && !request.url.startsWith('/files')) {
-    return reply.sendFile('index.html');
+    return reply.sendFile('index.html', path.join(__dirname, "../../public"));
   }
   reply.code(404).send({ error: 'Not Found' });
 });
