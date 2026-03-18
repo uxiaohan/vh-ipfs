@@ -239,7 +239,7 @@ app.post("/api/upload", async (request, reply) => {
 app.get("/api/images", async (request) => {
   const limit = Math.min(Number(request.query.limit) || 10, 100);
   const rows = db.prepare(`
-    SELECT id, cid, filename, original_name, mime_type, size_bytes, created_at
+    SELECT id, cid, filename, original_name, mime_type, size_bytes, created_at, access_path
     FROM images ORDER BY created_at DESC LIMIT ?
   `).all(limit);
   

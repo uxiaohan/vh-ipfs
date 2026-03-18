@@ -1,7 +1,10 @@
 <template>
   <div class="upload-page">
     <div class="card">
-      <h3 class="card-title">上传文件</h3>
+      <div class="card-header">
+        <h3 class="card-title">上传文件</h3>
+        <button class="btn btn-primary btn-sm admin-login-btn" @click="goToAdmin">🔐 管理</button>
+      </div>
       <div 
         class="upload-zone"
         :class="{ dragover }"
@@ -276,6 +279,10 @@ const checkIpfsHealth = async () => {
   }
 }
 
+const goToAdmin = () => {
+  window.location.href = '/admin'
+}
+
 onMounted(() => {
   loadGateways()
   loadRecent()
@@ -296,10 +303,17 @@ onMounted(() => {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
 .card-title {
   font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .upload-zone {
@@ -523,5 +537,122 @@ onMounted(() => {
 
 .ipfs-status.unavailable .status-dot {
   background: #ef4444;
+}
+
+.admin-login-btn {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .upload-page {
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .card-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .upload-zone {
+    padding: 2rem 1rem;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+
+  .upload-text {
+    font-size: 0.9rem;
+  }
+
+  .gateway-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .gateway-select {
+    width: 100%;
+  }
+
+  .file-card {
+    padding: 0;
+  }
+
+  .file-card .card-header {
+    padding: 1rem;
+  }
+
+  .toolbar {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .toolbar .search-input {
+    width: 100%;
+  }
+
+  .recent-files-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .recent-item {
+    padding: 0.5rem;
+  }
+
+  .recent-icon {
+    font-size: 1.5rem;
+  }
+
+  .recent-name {
+    font-size: 0.75rem;
+  }
+
+  .ipfs-status {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .admin-login-btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .upload-zone {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .upload-icon {
+    font-size: 2rem;
+  }
+
+  .upload-text {
+    font-size: 0.85rem;
+  }
+
+  .upload-hint {
+    font-size: 0.75rem;
+  }
+
+  .recent-files-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
 }
 </style>

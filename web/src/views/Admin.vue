@@ -50,6 +50,11 @@
     </div>
 
     <div v-else class="admin-grid">
+      <div class="admin-header">
+        <h2 class="admin-title">管理面板</h2>
+        <button class="btn btn-primary home-btn" @click="goToHome">🏠 返回首页</button>
+      </div>
+
       <div class="card storage-card">
         <div class="card-header">
           <h3 class="card-title">存储空间</h3>
@@ -172,6 +177,7 @@
                   >
                     查看
                   </button>
+                  <span class="btn-spacer"></span>
                   <button
                     class="btn btn-sm btn-danger"
                     @click="handleDelete(file.id)"
@@ -567,6 +573,10 @@ function openFile(url) {
   window.open(url, "_blank");
 }
 
+function goToHome() {
+  window.location.href = '/'
+}
+
 onMounted(async () => {
   if (isLoggedIn.value) {
     await Promise.all([
@@ -594,9 +604,59 @@ onMounted(async () => {
   overflow-y: auto;
 }
 
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.admin-header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.admin-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.home-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s;
+}
+
+.home-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+}
+
 @media (max-width: 768px) {
   .admin-page {
     padding: 1rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .admin-title {
+    font-size: 1.25rem;
+  }
+
+  .home-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -635,6 +695,7 @@ onMounted(async () => {
 .card-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -707,6 +768,11 @@ onMounted(async () => {
   font-size: 0.8rem;
 }
 
+.btn-spacer {
+  display: inline-block;
+  width: 0.5rem;
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -714,12 +780,12 @@ onMounted(async () => {
 
 .input {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.875rem;
   background: #334155;
   border: 1px solid #334155;
   border-radius: 8px;
   color: #f1f5f9;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: border-color 0.2s;
 }
 
@@ -729,24 +795,24 @@ onMounted(async () => {
 }
 
 .input-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .input-label {
   display: block;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #94a3b8;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .select {
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.875rem;
   background: #334155;
   border: 1px solid #334155;
   border-radius: 8px;
   color: #f1f5f9;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 
@@ -838,32 +904,53 @@ onMounted(async () => {
   overflow-x: auto;
   border-radius: 12px;
   border: 1px solid #334155;
+  scrollbar-width: thin;
+  scrollbar-color: #475569 #1e293b;
+}
+
+.file-list::-webkit-scrollbar {
+  height: 8px;
+}
+
+.file-list::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px;
+  min-width: 700px;
 }
 
 thead {
-  background: #0f172a;
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
 }
 
 th {
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #94a3b8;
   font-weight: 600;
   white-space: nowrap;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
 }
 
 td {
-  padding: 1rem;
+  padding: 0.75rem;
   border-bottom: 1px solid #334155;
   color: #f1f5f9;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 tr:last-child td {
@@ -1023,5 +1110,158 @@ tr:last-child td {
 
 .gateway-inputs .input {
   flex: 1;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .header-btns {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .login-box {
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .login-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .storage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .storage-input {
+    flex-direction: column;
+  }
+
+  .gateway-list {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .gateway-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .gateway-inputs {
+    flex-direction: column;
+  }
+
+  .admin-grid {
+    gap: 1rem;
+  }
+
+  .file-list {
+    font-size: 0.8rem;
+  }
+
+  th, td {
+    padding: 0.5rem;
+  }
+
+  .cid-cell {
+    max-width: 120px;
+  }
+
+  .device-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .device-text {
+    font-size: 0.75rem;
+  }
+
+  .btn-spacer {
+    display: block;
+    height: 0.25rem;
+  }
+
+  .progress-bar {
+    height: 6px;
+  }
+
+  .toast {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-page {
+    padding: 0.75rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .admin-title {
+    font-size: 1.1rem;
+  }
+
+  .header-btns {
+    gap: 0.35rem;
+  }
+
+  .btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .input, .select {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .modal-wrapper {
+    padding: 10px;
+  }
+
+  .modal-container {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .toast {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
 }
 </style>
