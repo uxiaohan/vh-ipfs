@@ -30,6 +30,13 @@ ipfs config --json Swarm.EnableHolePunching true
 ipfs config --json Provide.Enabled true
 ipfs config Routing.Type dht
 
+# 启用 pubsub 和 ipns pubsub（替代废弃的启动参数）
+ipfs config --json Pubsub.Enabled true
+ipfs config --json Ipns.UsePubsub true
+
+# 禁用遥测
+ipfs config --json Plugins.Plugins.telemetry.Config.Mode off
+
 rotate_ipfs_log
 
 (
@@ -45,4 +52,4 @@ echo "🌐 Gateway: http://0.0.0.0:16662"
 echo "📁 Data: ${IPFS_PATH}"
 echo "📊 Log: ${IPFS_LOG_FILE} (max ${IPFS_LOG_MAX_SIZE} bytes)"
 
-exec ipfs daemon --migrate=true --enable-pubsub-experiment --enable-namesys-pubsub
+exec ipfs daemon --migrate=true
