@@ -29,5 +29,7 @@ Thumbs.db
 *.swo
 *~
 
-web
-api
+web/node_modules
+web/dist
+api/node_modules
+api/dist
