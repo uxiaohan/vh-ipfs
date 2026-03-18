@@ -28,7 +28,7 @@ ipfs config --json Swarm.ConnMgr.LowWater 200
 ipfs config --json Swarm.RelayClient.Enabled true
 ipfs config --json Swarm.EnableHolePunching true
 ipfs config --json Provide.Enabled true
-ipfs config --json Routing.Type "dht"
+ipfs config Routing.Type dht
 
 rotate_ipfs_log
 
