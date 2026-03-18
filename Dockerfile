@@ -36,8 +36,8 @@ RUN npm install -g pnpm \
 
 COPY api ./api
 COPY web ./web
-RUN pnpm --filter api build
-RUN pnpm --filter web build
+RUN cd api && pnpm build
+RUN cd web && pnpm build
 
 FROM node:22-bullseye-slim
 
