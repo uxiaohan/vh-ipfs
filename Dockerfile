@@ -36,7 +36,6 @@ COPY db.js ./
 COPY start-ipfs.sh ./
 COPY supervisord.conf ./
 COPY public ./public
-COPY db ./db
 
 COPY web/package.json ./web/
 COPY web/vite.config.js ./web/

@@ -1,4 +1,4 @@
-# 🖼️ IPFS Gallery
+# 🖼️ VH-IPFS
 
 > 简单优雅的 IPFS 文件上传与管理平台
 
