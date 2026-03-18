@@ -1,11 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import crypto from "node:crypto";
 import Fastify from "fastify";
 import multipart from "@fastify/multipart";
 import jwt from "@fastify/jwt";
 import staticPlugin from "@fastify/static";
 import { create } from "ipfs-http-client";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import { initDb } from "./db.js";
 import { logger, LOG_FILE } from "./logger.js";
@@ -46,7 +50,7 @@ app.decorate("authenticate", async (request, reply) => {
 await app.register(multipart, { limits: { fileSize: MAX_UPLOAD_BYTES } });
 
 await app.register(staticPlugin, {
-  root: path.join(process.cwd(), "public"),
+  root: path.join(__dirname, "../public"),
   prefix: "/"
 });
 
@@ -338,6 +342,13 @@ app.get("/api/health", async () => {
   } catch {
     return { ok: true, ipfs: false };
   }
+});
+
+app.setNotFoundHandler((request, reply) => {
+  if (!request.url.startsWith('/api') && !request.url.startsWith('/files')) {
+    return reply.sendFile('index.html');
+  }
+  reply.code(404).send({ error: 'Not Found' });
 });
 
 app.listen({ port: PORT, host: "0.0.0.0" }, (err, address) => {

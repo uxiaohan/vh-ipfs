@@ -24,15 +24,20 @@ RUN set -e; \
   install /tmp/kubo/ipfs /usr/local/bin/ipfs; \
   rm -rf /tmp/kubo
 
+COPY pnpm-workspace.yaml ./
 COPY package.json ./
-RUN npm install -g pnpm@10.32.1 \
+COPY api/package.json ./api/
+COPY web/package.json ./web/
+RUN npm install -g pnpm \
   && pnpm config set store-dir /tmp/pnpm-store \
-  && pnpm install --prod \
+  && pnpm approve-builds --all \
+  && pnpm install \
   && rm -rf /tmp/pnpm-store
 
-COPY web/package.json ./web/
-WORKDIR /app/web
-RUN pnpm install && pnpm run build
+COPY api ./api
+COPY web ./web
+RUN pnpm --filter api build
+RUN pnpm --filter web build
 
 FROM node:22-bullseye-slim
 
@@ -44,12 +49,8 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY --from=builder /usr/local/bin/ipfs /usr/local/bin/ipfs
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
-COPY server.js ./
-COPY db.js ./
-COPY public ./public
-COPY --from=builder /app/web/dist ./web/dist
+COPY --from=builder /app/api/dist/index.js ./api/server.js
+COPY --from=builder /app/public ./public
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start-ipfs.sh /usr/local/bin/start-ipfs.sh

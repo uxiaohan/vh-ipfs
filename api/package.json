@@ -1,0 +1,20 @@
+{
+  "name": "vh-ipfs-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "build": "ncc build server.js -o dist"
+  },
+  "dependencies": {
+    "@fastify/jwt": "^10.0.0",
+    "@fastify/multipart": "^9.4.0",
+    "@fastify/static": "^9.0.0",
+    "better-sqlite3": "^12.8.0",
+    "fastify": "^5.8.2",
+    "ipfs-http-client": "^60.0.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.4"
+  }
+}
