@@ -22,7 +22,7 @@ const {
   PORT = 16661,
   DATA_DIR = "/data",
   DB_PATH,
-  IPFS_API_URL = "http://127.0.0.1:5001",
+  IPFS_API_URL = "http://0.0.0.0:5001",
   JWT_SECRET = crypto.randomBytes(32).toString('hex')
 } = process.env;
 
