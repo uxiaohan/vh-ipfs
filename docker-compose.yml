@@ -1,0 +1,12 @@
+services:
+  app:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    image: vh-ipfs
+    ports:
+      - "16661:16661"
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+      - ./ipfs-data:/data/ipfs

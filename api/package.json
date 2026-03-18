@@ -1,0 +1,25 @@
+{
+  "name": "ipfs-gallery",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev:web": "pnpm --filter web dev",
+    "build:web": "pnpm --filter web build"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "@fastify/jwt": "^10.0.0",
+    "@fastify/multipart": "^9.4.0",
+    "@fastify/static": "^9.0.0",
+    "better-sqlite3": "^12.8.0",
+    "fastify": "^5.8.2",
+    "ipfs-http-client": "^60.0.1"
+  },
+  "devDependencies": {
+    "vue": "^3.4.0",
+    "vue-router": "^4.2.0",
+    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^5.0.0"
+  }
+}
