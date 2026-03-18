@@ -22,12 +22,13 @@ fi
 ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
 ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/16662
 
-ipfs config --json DHT.Client.Enabled true
-ipfs config --json DHT.Server.Enabled true
-ipfs config --json Experimental.AcceleratedDHTClient true
-ipfs config --json Swarm.EnableRelayHop true
-ipfs config --json Swarm.ConnMgr.HighWater 200
-ipfs config --json Swarm.ConnMgr.LowWater 100
+# 快速传播优化配置
+ipfs config --json Swarm.ConnMgr.HighWater 500
+ipfs config --json Swarm.ConnMgr.LowWater 200
+ipfs config --json Swarm.EnableAutoRelay true
+ipfs config --json Swarm.EnableHolePunching true
+ipfs config --json Provide.Enabled true
+ipfs config --json Routing.Type "dht"
 
 rotate_ipfs_log
 
