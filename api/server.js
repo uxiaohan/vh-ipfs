@@ -171,10 +171,8 @@ app.post("/api/upload", async (request, reply) => {
     });
 
     const stat = fs.statSync(storedPath);
-    const { cid } = await ipfs.add(
-      { content: fs.createReadStream(storedPath), path: part.filename },
-      { pin: true, cidVersion: 1 }
-    );
+    const fileBuffer = fs.readFileSync(storedPath);
+    const { cid } = await ipfs.add(fileBuffer, { pin: true, cidVersion: 1 });
 
     const cidStr = cid.toString();
 
