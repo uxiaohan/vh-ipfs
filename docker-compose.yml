@@ -1,7 +1,7 @@
 services:
   app:
     build: 
-      context: ./api
+      context: .
       dockerfile: Dockerfile
     image: vh-ipfs
     ports:

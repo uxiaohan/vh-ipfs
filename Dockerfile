@@ -1,15 +1,13 @@
-FROM node:22-bullseye-slim
-
-ARG KUBO_VERSION
+FROM node:22-bullseye-slim AS builder
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-     curl ca-certificates supervisor python3 make g++ pkg-config libsqlite3-dev \
-  && rm -rf /var/lib/apt/lists/* \
-  && npm install -g pnpm@10.32.1
+     curl ca-certificates python3 make g++ pkg-config libsqlite3-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+ARG KUBO_VERSION
 RUN set -e; \
   arch="$(uname -m)"; \
   if [ "$arch" = "x86_64" ]; then KUBO_ARCH=amd64; \
@@ -26,32 +24,40 @@ RUN set -e; \
   install /tmp/kubo/ipfs /usr/local/bin/ipfs; \
   rm -rf /tmp/kubo
 
-COPY package.json ./
-RUN pnpm config set store-dir /tmp/pnpm-store \
+COPY package.json pnpm-lock.yaml* ./
+RUN npm install -g pnpm@10.32.1 \
+  && pnpm config set store-dir /tmp/pnpm-store \
   && pnpm install --prod \
   && rm -rf /tmp/pnpm-store
 
-COPY server.js ./
-COPY db.js ./
-COPY start-ipfs.sh ./
-COPY supervisord.conf ./
-COPY public ./public
-
-COPY web/package.json ./web/
-COPY web/vite.config.js ./web/
-COPY web/index.html ./web/
-COPY web/src ./web/src
-
+COPY web/package.json web/pnpm-lock.yaml* ./web/
 WORKDIR /app/web
 RUN pnpm install && pnpm run build
 
+FROM node:22-bullseye-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+     curl ca-certificates supervisor libsqlite3-0 \
+  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
+
+COPY --from=builder /usr/local/bin/ipfs /usr/local/bin/ipfs
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+COPY server.js ./
+COPY db.js ./
+COPY public ./public
+COPY --from=builder /app/web/dist ./web/dist
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start-ipfs.sh /usr/local/bin/start-ipfs.sh
 RUN chmod +x /usr/local/bin/start-ipfs.sh
 
 ENV IPFS_PATH=/data/ipfs
+
+VOLUME ["/data", "/data/ipfs"]
 
 EXPOSE 16661 8080
 
