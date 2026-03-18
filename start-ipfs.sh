@@ -25,7 +25,7 @@ ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/16662
 # 快速传播优化配置
 ipfs config --json Swarm.ConnMgr.HighWater 500
 ipfs config --json Swarm.ConnMgr.LowWater 200
-ipfs config --json Swarm.EnableAutoRelay true
+ipfs config --json Swarm.RelayClient.Enabled true
 ipfs config --json Swarm.EnableHolePunching true
 ipfs config --json Provide.Enabled true
 ipfs config --json Routing.Type "dht"
