@@ -35,15 +35,15 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 
 const db = initDb(ACTUAL_DB_PATH);
 
-app.log.info({ ipfsUrl: IPFS_API_URL }, "Initializing IPFS client");
-const ipfs = create({ url: IPFS_API_URL });
-app.log.info("IPFS client initialized");
-
 const authService = new AuthService(db, null);
 const storageService = new StorageService(db, UPLOAD_DIR, DATA_DIR);
 const imageService = new ImageService(db, UPLOAD_DIR);
 
 const app = Fastify({ logger: true, trustProxy: true });
+
+app.log.info({ ipfsUrl: IPFS_API_URL }, "Initializing IPFS client");
+const ipfs = create({ url: IPFS_API_URL });
+app.log.info("IPFS client initialized");
 
 async function initApp() {
   await app.register(jwt, { secret: JWT_SECRET, sign: { expiresIn: '7d' } });
