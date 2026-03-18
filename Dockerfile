@@ -49,7 +49,7 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY --from=builder /usr/local/bin/ipfs /usr/local/bin/ipfs
-COPY --from=builder /app/api/dist/index.js ./api/server.js
+COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/public ./public
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -60,6 +60,6 @@ ENV IPFS_PATH=/data/ipfs
 
 VOLUME ["/data", "/data/ipfs"]
 
-EXPOSE 16661 8080
+EXPOSE 16661 16662
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

@@ -59,4 +59,10 @@ router.beforeEach(async (to, from, next) => {
   next()
 })
 
+console.log('')
+console.log('🎨 IPFS Gallery Frontend')
+console.log('📝 API: /api')
+console.log('🌐 Gateway: http://0.0.0.0:16662')
+console.log('')
+
 createApp(App).use(router).mount('#app')

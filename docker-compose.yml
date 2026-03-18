@@ -6,7 +6,7 @@ services:
     image: vh-ipfs
     ports:
       - "16661:16661"
-      - "8080:8080"
+      - "16662:16662"
     volumes:
       - ./data:/data
       - ./ipfs-data:/data/ipfs
