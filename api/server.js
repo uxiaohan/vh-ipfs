@@ -7,6 +7,7 @@ import multipart from "@fastify/multipart";
 import jwt from "@fastify/jwt";
 import staticPlugin from "@fastify/static";
 import { create } from "kubo-rpc-client";
+import { UAParser } from "ua-parser-js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,20 @@ await initApp();
 
 const nowIso = () => new Date().toISOString();
 const getClientIp = (request) => request.ip ?? request.headers["x-forwarded-for"] ?? "unknown";
+const parseUserAgent = (ua) => {
+  if (!ua) {
+    return { browser: 'Unknown', os: 'Unknown', device: 'desktop' };
+  }
+  
+  const parser = new UAParser(ua);
+  const result = parser.getResult();
+  
+  return {
+    browser: `${result.browser.name || 'Unknown'} ${result.browser.version || ''}`.trim(),
+    os: `${result.os.name || 'Unknown'} ${result.os.version || ''}`.trim(),
+    device: result.device.type || 'desktop'
+  };
+};
 
 app.get("/health", () => ({ ok: true }));
 
@@ -175,6 +190,8 @@ app.post("/api/upload", async (request, reply) => {
     const { cid } = await ipfs.add(fileBuffer, { pin: true, cidVersion: 1 });
 
     const cidStr = cid.toString();
+    const ua = request.headers["user-agent"] ?? "";
+    const parsedUA = parseUserAgent(ua);
 
     const rowId = imageService.insertImage({
       cid: cidStr,
@@ -185,7 +202,10 @@ app.post("/api/upload", async (request, reply) => {
       stored_path: storedPath,
       created_at: nowIso(),
       uploader_ip: getClientIp(request),
-      uploader_ua: request.headers["user-agent"] ?? "",
+      uploader_ua: ua,
+      uploader_browser: parsedUA.browser,
+      uploader_os: parsedUA.os,
+      uploader_device: parsedUA.device,
       pin_status: "local"
     });
 

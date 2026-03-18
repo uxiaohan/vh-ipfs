@@ -147,6 +147,7 @@
                 <th>CID</th>
                 <th>大小</th>
                 <th>上传时间</th>
+                <th>设备</th>
                 <th>访问次数</th>
                 <th>操作</th>
               </tr>
@@ -157,6 +158,12 @@
                 <td class="cid-cell">{{ file.cid }}</td>
                 <td>{{ formatBytes(file.size_bytes) }}</td>
                 <td>{{ formatDate(file.created_at) }}</td>
+                <td class="device-cell">
+                  <div class="device-info">
+                    <span class="device-icon">{{ getDeviceIcon(file.uploader_device) }}</span>
+                    <span class="device-text">{{ file.uploader_browser }} / {{ file.uploader_os }}</span>
+                  </div>
+                </td>
                 <td>{{ file.access_count || 0 }}</td>
                 <td>
                   <button
@@ -420,6 +427,15 @@ const loading = computed(
 );
 
 const formatBytes = (bytes) => formatStorageBytes(bytes);
+
+function getDeviceIcon(device) {
+  if (!device) return '💻';
+  
+  if (device === 'mobile' || device === 'tablet') {
+    return '📱';
+  }
+  return '💻';
+}
 
 async function handleLogin() {
   if (hasPassword.value && !loginPassword.value) {
@@ -807,6 +823,7 @@ onMounted(async () => {
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px;
 }
 
 thead {
@@ -819,6 +836,7 @@ th {
   font-size: 0.85rem;
   color: #94a3b8;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 td {
@@ -836,6 +854,31 @@ tr:last-child td {
   font-family: monospace;
   font-size: 0.85rem;
   color: #6366f1;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.device-cell {
+  min-width: 150px;
+}
+
+.device-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.device-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.device-text {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  white-space: nowrap;
 }
 
 .loading,

@@ -34,13 +34,13 @@ export class ImageService {
 
   insertImage(row) {
     const stmt = this.db.prepare(`
-      INSERT INTO images (cid, filename, original_name, mime_type, size_bytes, stored_path, created_at, uploader_ip, uploader_ua, pin_status, remote_pin_status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO images (cid, filename, original_name, mime_type, size_bytes, stored_path, created_at, uploader_ip, uploader_ua, uploader_browser, uploader_os, uploader_device, pin_status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     return stmt.run(
       row.cid, row.filename, row.original_name, row.mime_type, row.size_bytes,
       row.stored_path, row.created_at, row.uploader_ip, row.uploader_ua,
-      row.pin_status, row.remote_pin_status
+      row.uploader_browser, row.uploader_os, row.uploader_device, row.pin_status
     ).lastInsertRowid;
   }
 

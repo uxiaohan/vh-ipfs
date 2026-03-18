@@ -12,7 +12,8 @@
     "@fastify/static": "^9.0.0",
     "better-sqlite3": "^12.8.0",
     "fastify": "^5.8.2",
-    "kubo-rpc-client": "^6.1.0"
+    "kubo-rpc-client": "^6.1.0",
+    "ua-parser-js": "^2.0.9"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.4"
