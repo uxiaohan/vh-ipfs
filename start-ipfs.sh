@@ -22,20 +22,18 @@ fi
 ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
 ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/16662
 
-# 快速传播优化配置
+# 快速传播优化配置（基于官方文档验证）
 ipfs config --json Swarm.ConnMgr.HighWater 500
 ipfs config --json Swarm.ConnMgr.LowWater 200
 ipfs config --json Swarm.RelayClient.Enabled true
 ipfs config --json Swarm.EnableHolePunching true
 ipfs config --json Provide.Enabled true
-ipfs config Routing.Type dht
-
-# 启用 pubsub 和 ipns pubsub（替代废弃的启动参数）
+ipfs config --json Routing.Type '"dht"'
 ipfs config --json Pubsub.Enabled true
 ipfs config --json Ipns.UsePubsub true
 
-# 禁用遥测
-ipfs config --json Plugins.Plugins.telemetry.Config.Mode off
+# 禁用遥测（使用环境变量）
+export IPFS_TELEMETRY=off
 
 rotate_ipfs_log
 
