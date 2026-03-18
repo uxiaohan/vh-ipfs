@@ -6,7 +6,7 @@ import Fastify from "fastify";
 import multipart from "@fastify/multipart";
 import jwt from "@fastify/jwt";
 import staticPlugin from "@fastify/static";
-import { create } from "ipfs-http-client";
+import { create } from "kubo-rpc-client";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,9 +22,10 @@ const {
   PORT = 16661,
   DATA_DIR = "/data",
   DB_PATH,
-  IPFS_API_URL = "http://127.0.0.1:5001/api/v0",
   JWT_SECRET = crypto.randomBytes(32).toString('hex')
 } = process.env;
+
+const IPFS_API_URL = "http://127.0.0.1:5001";
 
 const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 const ACTUAL_DB_PATH = DB_PATH ?? path.join(DATA_DIR, "db.sqlite");
