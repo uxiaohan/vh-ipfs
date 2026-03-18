@@ -24,13 +24,13 @@ RUN set -e; \
   install /tmp/kubo/ipfs /usr/local/bin/ipfs; \
   rm -rf /tmp/kubo
 
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json ./
 RUN npm install -g pnpm@10.32.1 \
   && pnpm config set store-dir /tmp/pnpm-store \
   && pnpm install --prod \
   && rm -rf /tmp/pnpm-store
 
-COPY web/package.json web/pnpm-lock.yaml* ./web/
+COPY web/package.json ./web/
 WORKDIR /app/web
 RUN pnpm install && pnpm run build
 
