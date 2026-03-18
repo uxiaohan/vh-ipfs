@@ -1,3 +1,7 @@
 packages:
   - 'web'
   - 'api'
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+  protobufjs: true
