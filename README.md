@@ -61,8 +61,7 @@ services:
     container_name: vh-ipfs
     restart: unless-stopped
     ports:
-      - "16661:16661"   # Web 服务
-      - "16662:16662"   # IPFS 网关
+      - "16661:16661"
     volumes:
       - ./data:/data
       - ./ipfs-data:/data/ipfs
@@ -74,7 +73,6 @@ services:
 docker run -d \
   --name vh-ipfs \
   -p 16661:16661 \
-  -p 16662:16662 \
   -v /etc/data:/data \
   -v /etc/ipfs-data:/data/ipfs \
   --restart unless-stopped \
@@ -98,7 +96,7 @@ docker run -d \
 |------|------|
 | 📤 **上传页面** | `http://<your-ip>:16661/` |
 | ⚙️ **管理后台** | `http://<your-ip>:16661/admin` |
-| 🌐 **IPFS 网关** | `http://<your-ip>:16662/ipfs/<CID>` |
+| 🌐 **IPFS 网关** | `http://<your-ip>:16661/ipfs/<CID>` |
 
 ## 🔧 环境变量
 

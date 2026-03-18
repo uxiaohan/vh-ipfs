@@ -60,6 +60,6 @@ ENV IPFS_PATH=/data/ipfs
 
 VOLUME ["/data", "/data/ipfs"]
 
-EXPOSE 16661 16662
+EXPOSE 16661
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

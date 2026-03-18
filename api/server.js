@@ -419,7 +419,6 @@ app.listen({ port: PORT, host: "0.0.0.0" }, (err, address) => {
   console.log('');
   console.log('🚀 IPFS Gallery Server');
   console.log(`📝 API: http://0.0.0.0:${PORT}`);
-  console.log(`🌐 Gateway: http://0.0.0.0:16662`);
   console.log(`📁 Data: ${DATA_DIR}`);
   console.log(`📊 Log: ${LOG_FILE}`);
   console.log('');

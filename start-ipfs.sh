@@ -46,7 +46,6 @@ rotate_ipfs_log
 
 echo "🚀 IPFS Daemon starting..."
 echo "📝 API: http://0.0.0.0:5001"
-echo "🌐 Gateway: http://0.0.0.0:16662"
 echo "📁 Data: ${IPFS_PATH}"
 echo "📊 Log: ${IPFS_LOG_FILE} (max ${IPFS_LOG_MAX_SIZE} bytes)"
 
