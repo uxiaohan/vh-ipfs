@@ -1,6 +1,7 @@
 {
   "name": "vh-ipfs",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev:web": "cd web && pnpm dev",
     "build:web": "cd web && pnpm build",

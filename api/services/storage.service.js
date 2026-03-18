@@ -71,12 +71,15 @@ export class StorageService {
     if (total <= maxBytes) return;
 
     const rows = this.db.prepare(`
-      SELECT id, stored_path, size_bytes FROM images 
-      ORDER BY access_count ASC, created_at ASC
+      SELECT id, stored_path, size_bytes, access_count, created_at FROM images 
+      ORDER BY (access_count * 0.3 + created_at * 0.7) ASC
     `).all();
 
     for (const row of rows) {
       if (total <= maxBytes) break;
+      
+      if (row.access_count > 5) continue;
+      
       if (row.stored_path && fs.existsSync(row.stored_path)) {
         fs.unlinkSync(row.stored_path);
         total -= row.size_bytes;

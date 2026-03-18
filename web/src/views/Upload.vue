@@ -12,13 +12,12 @@
       >
         <div class="upload-icon">📁</div>
         <p class="upload-text">拖拽文件到此处，或点击选择文件</p>
-        <p class="upload-hint">支持图片和视频，最大 50MB</p>
+        <p class="upload-hint">支持所有文件类型</p>
         <input 
           type="file" 
           ref="fileInput" 
           @change="handleFileSelect" 
           style="display: none;" 
-          accept="image/*,video/*"
           multiple
         >
       </div>
@@ -81,7 +80,7 @@
             class="recent-thumb" 
             loading="lazy"
           >
-          <div v-else class="recent-thumb video-thumb">🎬</div>
+          <div v-else class="recent-thumb video-thumb">{{ getFileIcon(item.original_name, item.mime_type) }}</div>
           <div class="recent-info">
             <div class="recent-name" :title="item.original_name">{{ item.original_name }}</div>
             <div class="recent-date">{{ formatDate(item.created_at) }}</div>
@@ -129,6 +128,45 @@ const formatDate = (dateStr) => {
   if (!dateStr) return '-'
   const date = new Date(dateStr)
   return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
+}
+
+const getFileIcon = (filename, mime) => {
+  const ext = filename?.split('.').pop()?.toLowerCase() || ''
+  
+  if (mime?.startsWith('image/')) return '🖼️'
+  if (mime?.startsWith('video/')) return '🎬'
+  if (mime?.startsWith('audio/')) return '🎵'
+  
+  const iconMap = {
+    pdf: '📄',
+    doc: '📝',
+    docx: '📝',
+    xls: '📊',
+    xlsx: '📊',
+    ppt: '📽️',
+    pptx: '📽️',
+    txt: '📃',
+    zip: '📦',
+    rar: '📦',
+    '7z': '📦',
+    tar: '📦',
+    gz: '📦',
+    exe: '⚙️',
+    msi: '⚙️',
+    apk: '📱',
+    ipa: '📱',
+    html: '🌐',
+    css: '🎨',
+    js: '📜',
+    json: '📋',
+    xml: '📋',
+    md: '📝',
+    sql: '🗄️',
+    db: '🗄️',
+    sqlite: '🗄️'
+  }
+  
+  return iconMap[ext] || '📁'
 }
 
 const loadGateways = async () => {

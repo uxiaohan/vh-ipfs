@@ -16,13 +16,13 @@ import { logger, LOG_FILE } from "./logger.js";
 import { AuthService } from "./services/auth.service.js";
 import { StorageService } from "./services/storage.service.js";
 import { ImageService } from "./services/image.service.js";
-import { MAX_UPLOAD_BYTES, ERROR_CODES } from "./services/constants.js";
+import { ERROR_CODES } from "./services/constants.js";
 
 const {
   PORT = 16661,
   DATA_DIR = "/data",
   DB_PATH,
-  IPFS_API_URL = "http://0.0.0.0:5001",
+  IPFS_API_URL = "http://127.0.0.1:5001/api/v0",
   JWT_SECRET = crypto.randomBytes(32).toString('hex')
 } = process.env;
 
@@ -34,7 +34,10 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 }
 
 const db = initDb(ACTUAL_DB_PATH);
+
+app.log.info({ ipfsUrl: IPFS_API_URL }, "Initializing IPFS client");
 const ipfs = create({ url: IPFS_API_URL });
+app.log.info("IPFS client initialized");
 
 const authService = new AuthService(db, null);
 const storageService = new StorageService(db, UPLOAD_DIR, DATA_DIR);
@@ -42,21 +45,24 @@ const imageService = new ImageService(db, UPLOAD_DIR);
 
 const app = Fastify({ logger: true, trustProxy: true });
 
-await app.register(jwt, { secret: JWT_SECRET, sign: { expiresIn: '7d' } });
-app.decorate("authenticate", async (request, reply) => {
-  await request.jwtVerify();
-});
+async function initApp() {
+  await app.register(jwt, { secret: JWT_SECRET, sign: { expiresIn: '7d' } });
+  app.decorate("authenticate", async (request, reply) => {
+    await request.jwtVerify();
+  });
 
-await app.register(multipart, { limits: { fileSize: MAX_UPLOAD_BYTES } });
+  await app.register(multipart, { limits: { fileSize: Infinity } });
 
-await app.register(staticPlugin, {
-  root: path.join(__dirname, "../../public"),
-  prefix: "/"
-});
+  await app.register(staticPlugin, {
+    root: path.join(__dirname, "../../public"),
+    prefix: "/"
+  });
+}
+
+await initApp();
 
 const nowIso = () => new Date().toISOString();
 const getClientIp = (request) => request.ip ?? request.headers["x-forwarded-for"] ?? "unknown";
-const isImageOrVideo = (mime) => mime?.startsWith("image/") || mime?.startsWith("video/");
 
 app.get("/health", () => ({ ok: true }));
 
@@ -135,13 +141,26 @@ app.post("/api/upload", async (request, reply) => {
       return reply.code(400).send({ error: ERROR_CODES.FILE_REQUIRED });
     }
 
-    if (!isImageOrVideo(part.mimetype)) {
-      return reply.code(400).send({ error: ERROR_CODES.ONLY_IMAGE_OR_VIDEO });
-    }
-
     const ext = path.extname(part.filename ?? "");
     const filename = `${crypto.randomUUID()}${ext}`;
     storedPath = path.join(UPLOAD_DIR, filename);
+
+    const currentTotal = storageService.getTotalLocalBytes();
+    const limit = storageService.getLocalLimitBytes();
+
+    if (part.file.size > limit) {
+      return reply.code(400).send({ 
+        error: "file_size_exceeds_limit",
+        message: `文件大小 ${(part.file.size / 1024 / 1024 / 1024).toFixed(2)}GB 超过最大上传限制 ${(limit / 1024 / 1024 / 1024).toFixed(2)}GB`
+      });
+    }
+
+    if (currentTotal + part.file.size > limit) {
+      return reply.code(400).send({ 
+        error: "storage_limit_exceeded",
+        message: `容量不足，剩余 ${((limit - currentTotal) / 1024 / 1024 / 1024).toFixed(2)}GB，需要 ${(part.file.size / 1024 / 1024 / 1024).toFixed(2)}GB`
+      });
+    }
 
     await new Promise((resolve, reject) => {
       const stream = fs.createWriteStream(storedPath);
@@ -247,10 +266,6 @@ app.post("/api/admin/storage", { preValidation: [app.authenticate] }, async (req
   if (next < used) {
     return reply.code(400).send({ error: "below_used", used_bytes: used });
   }
-  if (next > free) {
-    return reply.code(400).send({ error: "exceeds_disk_free", fs_free_bytes: free });
-  }
-  
   storageService.setDbStorageLimit(next);
   return { ok: true, limit_bytes: next, used_bytes: used };
 });
@@ -337,9 +352,11 @@ app.post("/api/admin/public-gateway", { preValidation: [app.authenticate] }, asy
 
 app.get("/api/health", async () => {
   try {
-    await ipfs.id();
+    const id = await ipfs.id();
+    app.log.info({ ipfsId: id }, "IPFS health check passed");
     return { ok: true, ipfs: true };
-  } catch {
+  } catch (error) {
+    app.log.error({ error, ipfsUrl: IPFS_API_URL }, "IPFS health check failed");
     return { ok: true, ipfs: false };
   }
 });
